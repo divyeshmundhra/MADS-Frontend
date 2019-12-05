@@ -1,11 +1,5 @@
 <template>
 <div>
-  <!-- <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb :heading="$t('menu.factory-layout')"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row> -->
   <b-row>
     <b-colxx xxs="12">
         <b-card class="pchild-0">
@@ -80,9 +74,9 @@
                         <b-card-header header-tag="header" role="tab">
                             <b-button block href="#" v-b-toggle.right-accordion-1 variant="info">Properties</b-button>
                         </b-card-header>
-                        <b-collapse id="right-accordion-1" accordion="right-accordion" role="tabpanel">
+                        <b-collapse id="right-accordion-1" visible accordion="right-accordion" role="tabpanel">
                             <b-card-body>
-                                <b-form @submit.prevent="onSubmit" @reset.prevent="onReset" v-if="show">
+                                <b-form @submit.prevent="onSubmit" @reset.prevent="onReset">
                                     <b-form-group id="input-group-1" label="Enter tooltip:" label-for="input-1">
                                         <b-form-input
                                         id="input-1"
@@ -98,6 +92,7 @@
                                         v-model="form.bgcolor"
                                         type="color"
                                         placeholder="Background color"
+                                        class="p-0"
                                         ></b-form-input>
                                     </b-form-group>
 
@@ -107,6 +102,7 @@
                                         v-model="form.strokecolor"
                                         type="color"
                                         placeholder="Stroke color"
+                                        class="p-0"
                                         ></b-form-input>
                                     </b-form-group>
 
@@ -119,16 +115,10 @@
                                         ></b-form-input>
                                     </b-form-group>
 
-                                    <b-form-group id="input-group-3" label="Connect:" label-for="input-3">
-                                        <b-form-select
-                                        id="input-3"
-                                        v-model="form.shape"
-                                        :options="[{ text: 'Select One', value: null }, ...shapes]"
-                                        ></b-form-select>
-                                    </b-form-group>
-
-                                    <b-button type="submit" variant="primary">Submit</b-button>
-                                    <b-button type="reset" variant="warning">Reset</b-button>
+                                    <div class="d-flex justify-content-around">
+                                      <b-button type="reset" variant="warning" disabled>Reset</b-button>
+                                      <b-button type="submit" variant="primary" disabled>Submit</b-button>
+                                    </div>
                                 </b-form>
                             </b-card-body>
                         </b-collapse>
@@ -136,7 +126,7 @@
 
                         <b-card no-body class="mb-1">
                         <b-card-header header-tag="header" role="tab">
-                            <b-button block href="#" v-b-toggle.right-accordion-2 variant="info">Connections</b-button>
+                            <b-button block href="#" v-b-toggle.right-accordion-2 variant="info">Layers</b-button>
                         </b-card-header>
                         <b-collapse id="right-accordion-2" accordion="right-accordion" role="tabpanel">
                             <b-card-body>
@@ -170,31 +160,11 @@ export default {
       },
       form: {
         tooltip: '',
-        bgcolor: '',
-        strokecolor: '',
-        strokewidth: '',
-        shape: null
+        bgcolor: '#ffffff',
+        strokecolor: '#ffffff',
+        strokewidth: 4
       },
-      show: true,
-      circle: 0,
-      rect: 0,
-      sq: 0,
-      shapes: [
-        {
-          id: 1,
-          type: 'v-circle',
-          config: {
-            x: 300,
-            y: 100,
-            radius: 70,
-            fill: 'green',
-            stroke: 'black',
-            strokeWidth: 4,
-            draggable: true,
-            name: 'circle1'
-          }
-        }
-      ],
+      shapes: [],
       selectedShapeName: ''
     }
   },
@@ -205,7 +175,9 @@ export default {
   },
   methods: {
     ...mapMutations(['changeSideMenuStatus']),
-    onSubmit () {},
+    onSubmit () {
+      console.log(this.form)
+    },
     onReset () {},
     newShape (kind, image) {
       let shape = {
@@ -214,8 +186,8 @@ export default {
         config: {
           x: 100,
           y: 100,
-          fill: 'green',
-          stroke: 'black',
+          fill: '#00f900',
+          stroke: '#000000',
           strokeWidth: 4,
           draggable: true,
           name: `${kind}${this.shapes.length + 1}`
@@ -307,6 +279,10 @@ export default {
       const shape = this.shapes.find(shape => shape.config.name === name)
       if (shape) {
         this.selectedShapeName = name
+        this.form.tooltip = shape.config.name
+        this.form.bgcolor = shape.config.fill
+        this.form.strokecolor = shape.config.stroke
+        this.form.strokewidth = shape.config.strokeWidth
       } else {
         this.selectedShapeName = ''
       }
